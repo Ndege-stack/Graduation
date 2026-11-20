@@ -64,6 +64,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 12px 38px rgba(212,176,106,
 button:focus-visible{outline:2px solid var(--cream);outline-offset:3px}
 .note{min-height:1.4em;margin:6px 0 0;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;color:var(--gold)}
 .confirmed{animation:fade .8s ease both}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.thanks{margin:24px auto 0;max-width:380px;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:1.22rem;line-height:1.6;color:var(--muted)}
 .foot{margin-top:26px;font-size:.62rem;letter-spacing:.34em;text-transform:uppercase;color:var(--brown)}
 @media (max-width:520px){.card{padding:48px 22px 36px}.details{grid-template-columns:1fr;gap:18px}.details div+div{border-left:0;border-top:1px solid rgba(212,176,106,.18);padding-top:18px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -91,12 +92,8 @@ button:focus-visible{outline:2px solid var(--cream);outline-offset:3px}
       <div><small>Venue</small><span>Kabarak<br>University</span></div>
     </div>
 
-    <form id="rsvp" novalidate>
-      <label for="name">Kindly confirm your attendance</label>
-      <input id="name" name="name" type="text" placeholder="Your full name" autocomplete="name" maxlength="60" required>
-      <button type="submit">Confirm</button>
-      <p class="note" id="note" role="status" aria-live="polite"></p>
-    </form>
+    <div class="rule"></div>
+    <p class="thanks">With heartfelt gratitude to everyone who supported me through my studies. This day is yours as much as it is mine.</p>
     <p class="foot">Under a sky full of stars</p>
   </section>
 </main>
@@ -124,20 +121,6 @@ button:focus-visible{outline:2px solid var(--cream);outline-offset:3px}
     if(matchMedia('(hover:hover)').matches){card.style.transform='rotateY('+(nx*5)+'deg) rotateX('+(-ny*5)+'deg)'}});
   addEventListener('pointerleave',function(){card.style.transform='';tx=ty=0});
 
-  var form=document.getElementById('rsvp'),input=document.getElementById('name'),note=document.getElementById('note');
-  function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-  function show(n){note.className='note confirmed';note.innerHTML='With gratitude, '+esc(n)+'. Your place is noted.'}
-  try{var saved=localStorage.getItem('rsvp-name');if(saved){input.value=saved;show(saved)}}catch(e){}
-  form.addEventListener('submit',function(e){
-    e.preventDefault();var n=input.value.trim();
-    if(!n){note.className='note';note.textContent='Please enter your name to confirm.';input.focus();return}
-    var btn=form.querySelector('button');btn.disabled=true;
-    note.className='note';note.textContent='Sending your confirmation...';
-    fetch('/api/rsvp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})})
-      .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok||!d.ok)throw new Error()})})
-      .then(function(){try{localStorage.setItem('rsvp-name',n)}catch(e){}show(n);btn.disabled=false})
-      .catch(function(){note.className='note';note.textContent='Something went wrong. Please try again.';btn.disabled=false});
-  });
 })();
 </script>
 <script>
